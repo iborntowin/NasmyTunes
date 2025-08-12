@@ -54,7 +54,9 @@ def start_conversion():
             'tracks': tracks,
             'temp_dir': None,
             'zip_path': None,
-            'error': None
+            'error': None,
+            'failed_track_list': [],  # List of failed tracks with reasons
+            'completed_track_list': []  # List of successfully converted tracks
         }
         
         # Start conversion in background thread
@@ -96,7 +98,10 @@ def get_conversion_status(job_id):
         'progress': round(progress, 1),
         'download_ready': job['status'] == 'completed' and job['zip_path'] is not None,
         'error': job.get('error'),
-        'created_at': job['created_at'].isoformat()
+        'created_at': job['created_at'].isoformat(),
+        'failed_track_list': job.get('failed_track_list', []),
+        'completed_track_list': job.get('completed_track_list', []),
+        'has_partial_success': job['completed_tracks'] > 0 and job['failed_tracks'] > 0
     })
 
 @conversion_bp.route('/download/<job_id>', methods=['GET'])
@@ -203,19 +208,40 @@ def convert_tracks_background(job_id):
                 
                 if success:
                     # Find the downloaded file
+                    file_found = False
                     for file in os.listdir(temp_dir):
                         if (file.endswith('.mp3') or file.endswith('.txt')) and \
                            any(artist.lower() in file.lower() for artist in track['artists']):
                             downloaded_files.append(os.path.join(temp_dir, file))
                             print(f"Successfully processed: {file}")
                             job['completed_tracks'] += 1
+                            job['completed_track_list'].append({
+                                'name': track['name'],
+                                'artists': track['artists'],
+                                'filename': file,
+                                'status': 'success'
+                            })
+                            file_found = True
                             break
-                    else:
+                    
+                    if not file_found:
                         print(f"Processed but couldn't find file for: {track_name}")
                         job['failed_tracks'] += 1
+                        job['failed_track_list'].append({
+                            'name': track['name'],
+                            'artists': track['artists'],
+                            'reason': 'File not found after processing',
+                            'status': 'failed'
+                        })
                 else:
                     print(f"Failed to process: {track_name} - {message}")
                     job['failed_tracks'] += 1
+                    job['failed_track_list'].append({
+                        'name': track['name'],
+                        'artists': track['artists'],
+                        'reason': message or 'Unknown error during processing',
+                        'status': 'failed'
+                    })
                 
                 # Rate limiting between tracks
                 time.sleep(random.uniform(3, 7))
@@ -225,26 +251,65 @@ def convert_tracks_background(job_id):
                 job['failed_tracks'] += 1
                 continue
         
-        # Create ZIP file if we have any successful downloads
-        if downloaded_files:
-            zip_filename = f"playlist_{job_id}.zip"
-            zip_path = os.path.join(temp_dir, zip_filename)
+        # Always create ZIP file, even with partial success
+        zip_filename = f"playlist_{job_id}.zip"
+        zip_path = os.path.join(temp_dir, zip_filename)
+        
+        with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            # Add successfully downloaded files (avoid duplicates)
+            added_files = set()
+            for file_path in downloaded_files:
+                filename = os.path.basename(file_path)
+                if filename not in added_files:
+                    zipf.write(file_path, filename)
+                    added_files.add(filename)
             
-            with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
-                for file_path in downloaded_files:
-                    # Add file to zip with just the filename (no path)
-                    zipf.write(file_path, os.path.basename(file_path))
+            # Add a summary report
+            summary_content = f"""NasmyTunes Conversion Report
+Playlist: {job['playlist_name']}
+Conversion Date: {job['created_at'].strftime('%Y-%m-%d %H:%M:%S')}
+
+SUMMARY:
+========
+Total Tracks: {job['total_tracks']}
+Successfully Converted: {job['completed_tracks']}
+Failed: {job['failed_tracks']}
+Success Rate: {(job['completed_tracks'] / job['total_tracks'] * 100):.1f}%
+
+SUCCESSFULLY CONVERTED TRACKS:
+==============================
+"""
             
-            job['zip_path'] = zip_path
+            for track in job['completed_track_list']:
+                summary_content += f"✅ {track['name']} - {', '.join(track['artists'])}\n"
+            
+            if job['failed_track_list']:
+                summary_content += f"\nFAILED TRACKS:\n==============\n"
+                for track in job['failed_track_list']:
+                    summary_content += f"❌ {track['name']} - {', '.join(track['artists'])}\n"
+                    summary_content += f"   Reason: {track['reason']}\n\n"
+            
+            summary_content += f"\nNOTE: This conversion was performed in demo mode due to YouTube's bot detection.\n"
+            summary_content += f"For actual audio files, please run the application locally on your computer.\n"
+            summary_content += f"\nThank you for using NasmyTunes! 🎵"
+            
+            # Add summary to ZIP
+            zipf.writestr("CONVERSION_REPORT.txt", summary_content)
+        
+        job['zip_path'] = zip_path
+        job['current_track'] = None
+        
+        # Determine final status
+        if job['completed_tracks'] > 0:
             job['status'] = 'completed'
-            job['current_track'] = None
-            
-            print(f"Conversion completed! Created ZIP with {len(downloaded_files)} files")
-            
+            if job['failed_tracks'] > 0:
+                print(f"Conversion completed with partial success: {job['completed_tracks']}/{job['total_tracks']} tracks")
+            else:
+                print(f"Conversion completed successfully: {job['completed_tracks']}/{job['total_tracks']} tracks")
         else:
-            job['status'] = 'failed'
-            job['error'] = 'No tracks were successfully converted'
-            print("Conversion failed: No tracks were successfully converted")
+            job['status'] = 'completed'  # Still completed, just with no successful tracks
+            job['error'] = 'No tracks were successfully converted, but report is available'
+            print("Conversion completed: No tracks were successfully converted")
         
     except Exception as e:
         job['status'] = 'failed'

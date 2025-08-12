@@ -304,8 +304,43 @@ function updateProgress(status) {
 }
 
 function showDownloadReady(status) {
-    elements.downloadMessage.textContent = 
-        `Successfully converted ${status.completed_tracks} out of ${status.total_tracks} tracks.`;
+    let message = '';
+    
+    if (status.completed_tracks === status.total_tracks) {
+        // Perfect success
+        message = `🎉 Successfully converted all ${status.total_tracks} tracks!`;
+    } else if (status.completed_tracks > 0) {
+        // Partial success
+        message = `✅ Successfully converted ${status.completed_tracks} out of ${status.total_tracks} tracks.`;
+        if (status.failed_tracks > 0) {
+            message += `\n⚠️ ${status.failed_tracks} tracks failed to convert.`;
+        }
+    } else {
+        // No success
+        message = `❌ Unable to convert any tracks from this playlist.`;
+    }
+    
+    message += `\n\nA detailed report is included in your download.`;
+    
+    elements.downloadMessage.textContent = message;
+    
+    // Add detailed results if available
+    if (status.failed_track_list && status.failed_track_list.length > 0) {
+        const detailsDiv = document.createElement('div');
+        detailsDiv.className = 'conversion-details';
+        detailsDiv.innerHTML = `
+            <h4>Failed Tracks:</h4>
+            <ul class="failed-tracks-list">
+                ${status.failed_track_list.map(track => 
+                    `<li>❌ ${track.name} - ${track.artists.join(', ')}<br>
+                     <small>Reason: ${track.reason}</small></li>`
+                ).join('')}
+            </ul>
+        `;
+        
+        // Insert after the download message
+        elements.downloadMessage.parentNode.insertBefore(detailsDiv, elements.downloadMessage.nextSibling);
+    }
     
     showStep(elements.downloadStep);
 }

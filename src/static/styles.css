@@ -897,3 +897,85 @@ body::before {
     }
 }
 
+/* Conversion Details Styles */
+.conversion-details {
+    margin-top: var(--spacing-lg);
+    padding: var(--spacing-md);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    backdrop-filter: blur(10px);
+}
+
+.conversion-details h4 {
+    color: var(--warning-orange);
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--spacing-md);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.failed-tracks-list {
+    list-style: none;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.failed-tracks-list li {
+    padding: var(--spacing-sm) 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.failed-tracks-list li:last-child {
+    border-bottom: none;
+}
+
+.failed-tracks-list small {
+    color: var(--text-muted);
+    font-size: var(--font-size-xs);
+    font-style: italic;
+}
+
+/* Success/Partial Success Messages */
+.download-info h3 {
+    margin-bottom: var(--spacing-md);
+}
+
+.download-info p {
+    white-space: pre-line;
+    line-height: 1.6;
+}
+
+/* Progress Step Enhancements */
+.conversion-stats .stat {
+    position: relative;
+}
+
+.conversion-stats .stat.has-failures {
+    background: rgba(255, 149, 0, 0.1);
+    border-color: var(--warning-orange);
+}
+
+.conversion-stats .stat.all-success {
+    background: rgba(52, 199, 89, 0.1);
+    border-color: var(--success-green);
+}
+
+/* Responsive Design for Details */
+@media (max-width: 768px) {
+    .conversion-details {
+        margin-top: var(--spacing-md);
+        padding: var(--spacing-sm);
+    }
+    
+    .failed-tracks-list {
+        max-height: 150px;
+    }
+    
+    .failed-tracks-list li {
+        font-size: var(--font-size-sm);
+    }
+}
