@@ -104,9 +104,28 @@ def debug_info():
         'environment': os.environ.get('FLASK_ENV', 'unknown'),
         'spotify_configured': bool(os.getenv('SPOTIFY_CLIENT_ID')),
         'port': os.environ.get('PORT', '5001'),
+        'demo_mode': os.getenv('DEMO_MODE', 'false').lower() == 'true',
         'app_status': 'running'
     }
     return debug_data
+
+@app.route('/demo-info')
+def demo_info():
+    """Show demo mode information page"""
+    return send_from_directory(app.static_folder, 'demo-notice.html')
+
+@app.route('/toggle-demo')
+def toggle_demo():
+    """Toggle demo mode for testing"""
+    current_mode = os.getenv('DEMO_MODE', 'false').lower() == 'true'
+    new_mode = not current_mode
+    os.environ['DEMO_MODE'] = 'true' if new_mode else 'false'
+    
+    return {
+        'demo_mode': new_mode,
+        'message': f"Demo mode {'enabled' if new_mode else 'disabled'}",
+        'note': 'Demo mode creates placeholder files instead of downloading from YouTube'
+    }
 
 @app.errorhandler(404)
 def not_found(error):

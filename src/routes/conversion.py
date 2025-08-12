@@ -7,6 +7,7 @@ from flask import Blueprint, request, jsonify, send_file
 from youtube_search import YoutubeSearch
 import yt_dlp
 from src.utils.youtube_downloader import EnhancedYouTubeDownloader
+from src.utils.alternative_downloader import AlternativeAudioDownloader
 import threading
 import time
 from datetime import datetime, timedelta
@@ -157,9 +158,13 @@ def convert_tracks_background(job_id):
         temp_dir = tempfile.mkdtemp(prefix=f'spotify_converter_{job_id}_')
         job['temp_dir'] = temp_dir
         
-        # Initialize enhanced downloader
-        downloader = EnhancedYouTubeDownloader()
+        # Initialize downloaders
+        youtube_downloader = EnhancedYouTubeDownloader()
+        alternative_downloader = AlternativeAudioDownloader()
         downloaded_files = []
+        
+        # Check if we should use demo mode (for YouTube bot issues)
+        demo_mode = os.getenv('DEMO_MODE', 'false').lower() == 'true'
         
         for i, track in enumerate(job['tracks']):
             try:
@@ -169,26 +174,47 @@ def convert_tracks_background(job_id):
                 
                 print(f"Processing track {i+1}/{len(job['tracks'])}: {track_name}")
                 
-                # Use enhanced downloader
-                success, message = downloader.download_track(
-                    track['name'], 
-                    track['artists'], 
-                    temp_dir
-                )
+                success = False
+                message = ""
+                
+                if demo_mode:
+                    # Use alternative downloader for demo
+                    success, message = alternative_downloader.download_track_alternative(
+                        track['name'], 
+                        track['artists'], 
+                        temp_dir
+                    )
+                else:
+                    # Try YouTube downloader first
+                    success, message = youtube_downloader.download_track(
+                        track['name'], 
+                        track['artists'], 
+                        temp_dir
+                    )
+                    
+                    # If YouTube fails, fall back to alternative
+                    if not success:
+                        print(f"YouTube failed, trying alternative method...")
+                        success, message = alternative_downloader.download_track_alternative(
+                            track['name'], 
+                            track['artists'], 
+                            temp_dir
+                        )
                 
                 if success:
                     # Find the downloaded file
                     for file in os.listdir(temp_dir):
-                        if file.endswith('.mp3') and any(artist.lower() in file.lower() for artist in track['artists']):
+                        if (file.endswith('.mp3') or file.endswith('.txt')) and \
+                           any(artist.lower() in file.lower() for artist in track['artists']):
                             downloaded_files.append(os.path.join(temp_dir, file))
-                            print(f"Successfully converted: {file}")
+                            print(f"Successfully processed: {file}")
                             job['completed_tracks'] += 1
                             break
                     else:
-                        print(f"Downloaded but couldn't find file for: {track_name}")
+                        print(f"Processed but couldn't find file for: {track_name}")
                         job['failed_tracks'] += 1
                 else:
-                    print(f"Failed to download: {track_name} - {message}")
+                    print(f"Failed to process: {track_name} - {message}")
                     job['failed_tracks'] += 1
                 
                 # Rate limiting between tracks
