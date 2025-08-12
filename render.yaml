@@ -14,3 +14,5 @@ services:
         value: false
       - key: FORCE_ADVANCED_BYPASS
         value: true
+      - key: USE_AUTHENTICATION
+        value: true

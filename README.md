@@ -1,6 +1,23 @@
-# 🎵 Spotify to MP3 Converter
+# 🎵 NasmyTunes - Spotify to MP3 Converter
 
 Convert your Spotify playlists to high-quality MP3 files with a beautiful glassmorphism interface.
+
+## 📋 Table of Contents
+
+- [🏗️ System Architecture](#️-system-architecture)
+- [⚡ Quick Start](#-quick-start)
+- [🌐 Live Demo](#-live-demo)
+- [🚀 Free Deployment Options](#-free-deployment-options)
+- [🤖 Advanced Bypass Techniques](#-advanced-bypass-techniques)
+- [🛠️ Features](#️-features)
+- [🔒 Security](#-security)
+- [⚖️ Legal](#️-legal)
+
+## 🏗️ System Architecture
+
+![NasmyTunes Architecture](diagram.png)
+
+*Complete system architecture showing the flow from Spotify playlist analysis to MP3 conversion and download*
 
 ## ⚡ Quick Start
 
@@ -71,11 +88,46 @@ This tool is for **personal use only**. Respect copyright laws and platform term
 - ✅ Modern glassmorphism UI
 - ✅ Mobile responsive
 
-## 📱 Usage
+## 🌐 Live Demo
 
-1. Paste a public Spotify playlist URL
-2. Preview tracks
-3. Start conversion
-4. Download ZIP file with MP3s
+**🚀 Try it now:** [https://nasmytunes.onrender.com](https://nasmytunes.onrender.com)
+
+### 📱 How to Use
+
+1. **🎵 Paste Spotify playlist URL** (make sure it's public)
+2. **👀 Preview tracks** and confirm selection  
+3. **🚀 Start conversion** with real-time progress
+4. **📦 Download ZIP** with converted files
+
+## 🏗️ Technical Architecture
+
+The diagram above shows our comprehensive system design featuring:
+
+- **🎯 Multi-layer Bypass System**: Advanced techniques to handle YouTube's bot detection
+- **🔄 Real-time Processing**: Live progress updates and status tracking
+- **🛡️ Graceful Degradation**: Demo mode when cloud restrictions apply
+- **📊 Professional UI**: Modern glassmorphism design with responsive layout
+
+📚 **Documentation:**
+- [Architecture Guide](docs/ARCHITECTURE.md) - Technical deep dive
+- [Visual Guide](docs/VISUAL_GUIDE.md) - Diagram breakdown and UI/UX details
+
+## 🤖 Advanced Bypass Techniques
+
+Our system implements cutting-edge bypass methods:
+
+- **🔐 Authentication Simulation**: Browser cookie management
+- **📱 Multiple Client Types**: Android, Web, Embedded clients
+- **🌐 Rate Limiting**: Human-like request patterns
+- **🔄 Proxy Support**: IP rotation capabilities
+- **🎯 Fallback Systems**: Graceful handling of failures
+
+## 🎉 Why NasmyTunes?
+
+- **✨ Works Locally**: Full MP3 downloads on your computer
+- **🌐 Cloud Demo**: Professional demonstration on Render
+- **🔧 Open Source**: Complete codebase available
+- **📚 Educational**: Learn about API integration and bypass techniques
+- **🎨 Modern Design**: Beautiful glassmorphism interface
 
 Enjoy your music! 🎶

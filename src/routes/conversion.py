@@ -10,6 +10,7 @@ from src.utils.youtube_downloader import EnhancedYouTubeDownloader
 from src.utils.alternative_downloader import AlternativeAudioDownloader
 from src.utils.advanced_youtube_bypass import AdvancedYouTubeBypass
 from src.utils.simple_bypass import SimpleBypass
+from src.utils.authenticated_bypass import AuthenticatedBypass
 import threading
 import time
 from datetime import datetime, timedelta
@@ -170,11 +171,13 @@ def convert_tracks_background(job_id):
         alternative_downloader = AlternativeAudioDownloader()
         advanced_bypass = AdvancedYouTubeBypass()
         simple_bypass = SimpleBypass()
+        auth_bypass = AuthenticatedBypass()
         downloaded_files = []
         
         # Check if we should use demo mode (for YouTube bot issues)
         demo_mode = os.getenv('DEMO_MODE', 'false').lower() == 'true'
         force_advanced_bypass = os.getenv('FORCE_ADVANCED_BYPASS', 'true').lower() == 'true'
+        use_authentication = os.getenv('USE_AUTHENTICATION', 'true').lower() == 'true'
         
         for i, track in enumerate(job['tracks']):
             try:
@@ -195,17 +198,27 @@ def convert_tracks_background(job_id):
                         temp_dir
                     )
                 else:
-                    # Try simple bypass first (most reliable)
-                    print(f"🎵 Trying simple bypass...")
-                    success, message = simple_bypass.download_simple(
-                        track['name'], 
-                        track['artists'], 
-                        temp_dir
-                    )
+                    # Try authenticated bypass first (most effective)
+                    if use_authentication:
+                        print(f"🔐 Trying authenticated bypass...")
+                        success, message = auth_bypass.download_with_authentication(
+                            track['name'], 
+                            track['artists'], 
+                            temp_dir
+                        )
+                    
+                    # If auth fails, try simple bypass
+                    if not success:
+                        print(f"🎵 Trying simple bypass...")
+                        success, message = simple_bypass.download_simple(
+                            track['name'], 
+                            track['artists'], 
+                            temp_dir
+                        )
                     
                     # If simple bypass fails and advanced is enabled, try advanced
                     if not success and force_advanced_bypass:
-                        print(f"🚀 Simple failed, trying advanced bypass...")
+                        print(f"🚀 Trying advanced bypass...")
                         try:
                             success, message = advanced_bypass.download_with_advanced_bypass(
                                 track['name'], 
@@ -335,6 +348,13 @@ SUCCESSFULLY CONVERTED TRACKS:
         job['status'] = 'failed'
         job['error'] = str(e)
         print(f"Conversion failed with error: {str(e)}")
+    
+    finally:
+        # Cleanup authenticated bypass resources
+        try:
+            auth_bypass.cleanup()
+        except:
+            pass
 
 # Cleanup old jobs periodically (in production, use a proper job scheduler)
 def cleanup_old_jobs():
