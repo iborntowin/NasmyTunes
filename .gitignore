@@ -68,3 +68,8 @@ temp/
 downloads/
 uploads/
 src/database/app.db
+
+# FFmpeg executables (downloaded by setup.py)
+ffmpeg.exe
+ffmpeg/
+*.exe
