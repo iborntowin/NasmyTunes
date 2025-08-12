@@ -2,13 +2,24 @@ import os
 import tempfile
 import zipfile
 import shutil
+import random
 from flask import Blueprint, request, jsonify, send_file
 from youtube_search import YoutubeSearch
 import yt_dlp
+from src.utils.youtube_downloader import EnhancedYouTubeDownloader
 import threading
 import time
 from datetime import datetime, timedelta
 import uuid
+
+# User agents to rotate
+USER_AGENTS = [
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:89.0) Gecko/20100101 Firefox/89.0'
+]
 
 conversion_bp = Blueprint('conversion', __name__)
 
@@ -146,6 +157,8 @@ def convert_tracks_background(job_id):
         temp_dir = tempfile.mkdtemp(prefix=f'spotify_converter_{job_id}_')
         job['temp_dir'] = temp_dir
         
+        # Initialize enhanced downloader
+        downloader = EnhancedYouTubeDownloader()
         downloaded_files = []
         
         for i, track in enumerate(job['tracks']):
@@ -156,46 +169,30 @@ def convert_tracks_background(job_id):
                 
                 print(f"Processing track {i+1}/{len(job['tracks'])}: {track_name}")
                 
-                # Search for the track on YouTube
-                search_query = f"{track['name']} {' '.join(track['artists'])}"
-                results = YoutubeSearch(search_query, max_results=1).to_dict()
+                # Use enhanced downloader
+                success, message = downloader.download_track(
+                    track['name'], 
+                    track['artists'], 
+                    temp_dir
+                )
                 
-                if not results:
-                    print(f"No YouTube results for: {search_query}")
+                if success:
+                    # Find the downloaded file
+                    for file in os.listdir(temp_dir):
+                        if file.endswith('.mp3') and any(artist.lower() in file.lower() for artist in track['artists']):
+                            downloaded_files.append(os.path.join(temp_dir, file))
+                            print(f"Successfully converted: {file}")
+                            job['completed_tracks'] += 1
+                            break
+                    else:
+                        print(f"Downloaded but couldn't find file for: {track_name}")
+                        job['failed_tracks'] += 1
+                else:
+                    print(f"Failed to download: {track_name} - {message}")
                     job['failed_tracks'] += 1
-                    continue
                 
-                video_url = f"https://www.youtube.com/watch?v={results[0]['id']}"
-                print(f"Found video: {results[0]['title']}")
-                
-                # Create safe filename
-                safe_filename = "".join(c for c in f"{i+1:02d}. {track['name']} - {', '.join(track['artists'])}" 
-                                      if c.isalnum() or c in (' ', '-', '_', '.')).rstrip()
-                
-                # Download and convert to MP3
-                ydl_opts = {
-                    'format': 'bestaudio/best',
-                    'outtmpl': os.path.join(temp_dir, f'{safe_filename}.%(ext)s'),
-                    'postprocessors': [{
-                        'key': 'FFmpegExtractAudio',
-                        'preferredcodec': 'mp3',
-                        'preferredquality': '192',
-                    }],
-                    'quiet': True,
-                    'no_warnings': True,
-                }
-                
-                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                    ydl.download([video_url])
-                
-                # Find the downloaded MP3 file
-                for file in os.listdir(temp_dir):
-                    if file.startswith(safe_filename) and file.endswith('.mp3'):
-                        downloaded_files.append(os.path.join(temp_dir, file))
-                        print(f"Successfully converted: {file}")
-                        break
-                
-                job['completed_tracks'] += 1
+                # Rate limiting between tracks
+                time.sleep(random.uniform(3, 7))
                 
             except Exception as e:
                 print(f"Error converting track {track['name']}: {str(e)}")
