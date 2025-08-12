@@ -264,15 +264,24 @@ class NasmyTunesCLI:
         else:
             print(f"\n😞 No tracks were converted successfully.")
 
+def show_welcome():
+    """Show welcome message on first run"""
+    print("🎵 Welcome to NasmyTunes!")
+    print("=" * 50)
+    print("✅ Setup complete! Ready to convert Spotify playlists to MP3")
+    print("💡 Make sure your .env file has valid Spotify API credentials")
+    print("🔗 Get credentials: https://developer.spotify.com/dashboard")
+    print("=" * 50)
+
 def show_menu():
     """Display the main menu"""
-    print("\n🎵 NasmyTunes CLI - Spotify to MP3 Converter")
-    print("=" * 50)
-    print("1. Convert Spotify Playlist to MP3")
-    print("2. Test Download (Single Track)")
-    print("3. Help & Instructions")
-    print("4. Exit")
-    print("=" * 50)
+    print("\n🎵 NasmyTunes CLI - Main Menu")
+    print("=" * 40)
+    print("1. 🎵 Convert Spotify Playlist to MP3")
+    print("2. 🧪 Test Download (Single Track)")
+    print("3. 📖 Help & Instructions")
+    print("4. 🚪 Exit")
+    print("=" * 40)
 
 def get_user_choice():
     """Get user menu choice"""
@@ -291,22 +300,38 @@ def get_user_choice():
 
 def show_help():
     """Show help and instructions"""
-    print("\n📖 How to Use NasmyTunes:")
+    print("\n📖 NasmyTunes Help & Instructions")
     print("=" * 50)
+    
+    print("\n🔑 SPOTIFY API SETUP:")
+    print("1. Visit: https://developer.spotify.com/dashboard")
+    print("2. Create a new app")
+    print("3. Copy Client ID and Client Secret")
+    print("4. Edit .env file with your credentials")
+    
+    print("\n🎵 HOW TO CONVERT PLAYLISTS:")
     print("1. Get your Spotify playlist URL:")
-    print("   - Open Spotify")
-    print("   - Go to your playlist")
-    print("   - Click 'Share' → 'Copy link to playlist'")
-    print("   - Example: https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M")
-    print("\n2. Paste the URL when prompted")
-    print("3. Choose output options")
-    print("4. Wait for conversion to complete")
-    print("5. Find your MP3 files in the downloads folder")
-    print("\n💡 Tips:")
-    print("   - Make sure your playlist is public or you own it")
-    print("   - Conversion time depends on playlist size")
-    print("   - Files are saved as high-quality MP3s")
-    print("   - A ZIP file is created with all tracks")
+    print("   • Open Spotify app or web player")
+    print("   • Go to your playlist")
+    print("   • Click 'Share' → 'Copy link to playlist'")
+    print("   • Example: https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M")
+    print("\n2. Select option 1 in the main menu")
+    print("3. Paste the playlist URL when prompted")
+    print("4. Choose your preferences (or press Enter for defaults)")
+    print("5. Wait for conversion to complete")
+    print("6. Find your MP3 files in the downloads folder")
+    
+    print("\n💡 TIPS & TROUBLESHOOTING:")
+    print("• Make sure your playlist is public or you own it")
+    print("• Conversion time depends on playlist size")
+    print("• Files are saved as high-quality MP3s")
+    print("• A ZIP file is created with all tracks")
+    print("• Use option 2 to test if everything works")
+    
+    print("\n🔗 USEFUL LINKS:")
+    print("• Spotify Developer Dashboard: https://developer.spotify.com/dashboard")
+    print("• Web API Documentation: https://developer.spotify.com/documentation/web-api")
+    print("• GitHub Repository: https://github.com/iborntowin/NasmyTunes")
 
 def get_playlist_options():
     """Get playlist conversion options from user"""
@@ -367,6 +392,9 @@ def run_test():
 def main():
     """Main application loop"""
     try:
+        # Show welcome message on first run
+        show_welcome()
+        
         while True:
             show_menu()
             choice = get_user_choice()

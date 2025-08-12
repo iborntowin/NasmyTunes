@@ -218,24 +218,35 @@ def main():
     # Create env template
     create_env_template()
     
-    print("\n" + "=" * 40)
-    print("🎉 Setup completed successfully!")
-    print("=" * 40)
-    print("\nNext steps:")
-    print("1. Edit .env file with your Spotify API credentials")
-    print("2. Run the CLI:")
+    print("\n" + "=" * 50)
+    print("🎉 NasmyTunes Setup Complete!")
+    print("=" * 50)
     
+    print("\n📋 NEXT STEPS:")
+    print("=" * 20)
+    print("1. 🔑 Configure Spotify API:")
+    print("   • Visit: https://developer.spotify.com/dashboard")
+    print("   • Create an app and get your Client ID & Secret")
+    print("   • Edit the .env file with your credentials")
+    
+    print("\n2. 🚀 Start NasmyTunes:")
     system = platform.system().lower()
     if system == 'windows':
-        print("   - Double-click nasmytunes.bat")
-        print("   - Or run: nasmytunes.bat <playlist_url>")
+        print("   • Double-click: nasmytunes.bat")
+        print("   • Or run: python nasmytunes_cli.py")
     else:
-        print("   - Run: ./nasmytunes.sh <playlist_url>")
-        print("   - Or: python3 nasmytunes_cli.py <playlist_url>")
+        print("   • Run: ./nasmytunes.sh")
+        print("   • Or run: python3 nasmytunes_cli.py")
     
-    print("\nExample:")
-    print("  nasmytunes.bat https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M")
-    print("\nFor help: python nasmytunes_cli.py --help")
+    print("\n3. 🎵 Convert playlists:")
+    print("   • Select option 1 in the menu")
+    print("   • Paste your Spotify playlist URL")
+    print("   • Enjoy your music!")
+    
+    print("\n" + "=" * 50)
+    print("📖 Need help? Check the README.md for detailed setup guide")
+    print("🌐 Spotify Developer Dashboard: https://developer.spotify.com/dashboard")
+    print("=" * 50)
 
 if __name__ == "__main__":
     main()

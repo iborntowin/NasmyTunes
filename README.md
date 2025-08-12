@@ -18,6 +18,7 @@ That's it! Just paste your playlist URL and enjoy your music! 🎵
 
 - [🏗️ System Architecture](#️-system-architecture)
 - [⚡ Quick Start](#-quick-start)
+- [🔑 Spotify API Setup Guide](#-spotify-api-setup-guide)
 - [📁 Project Structure](#-project-structure)
 - [🌐 Live Demo](#-live-demo)
 - [🚀 Free Deployment Options](#-free-deployment-options)
@@ -44,7 +45,8 @@ python setup.py  # Automatically installs everything!
 ```
 
 2. **Configure Spotify API:**
-   - Edit `.env` with your [Spotify API credentials](https://developer.spotify.com/dashboard)
+   - Get your credentials from [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
+   - Edit `.env` with your API credentials (see setup guide below)
 
 3. **Start the app:**
 ```bash
@@ -60,6 +62,32 @@ python setup.py  # Automatically installs everything!
    - Just paste your Spotify playlist URL
    - Choose your preferences
    - Done! 🎉
+
+## 🔑 Spotify API Setup Guide
+
+### Step 1: Create Spotify App
+1. Visit the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
+2. Log in with your Spotify account
+3. Click "Create App"
+4. Fill in the app details (name, description)
+5. Accept the terms and create your app
+
+### Step 2: Get Your Credentials
+![Spotify API Tutorial](docs/spotify-api-tutorial.png)
+
+*Your Client ID and Client Secret will be displayed in your app dashboard*
+
+### Step 3: Configure NasmyTunes
+Edit your `.env` file with the credentials:
+```env
+SPOTIFY_CLIENT_ID=your_client_id_here
+SPOTIFY_CLIENT_SECRET=your_client_secret_here
+```
+
+### 📚 Useful Links
+- [Spotify Web API Documentation](https://developer.spotify.com/documentation/web-api)
+- [Developer Dashboard](https://developer.spotify.com/dashboard)
+- [API Getting Started Guide](https://developer.spotify.com/documentation/web-api/tutorials/getting-started)
 
 ## 📁 Project Structure
 
