@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify to MP3 Converter</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo">
+                        <i class="fas fa-music"></i>
+                        <span>Spotify to MP3</span>
+                    </div>
+                    <nav class="nav">
+                        <a href="#features" class="nav-link">Features</a>
+                        <a href="#how-it-works" class="nav-link">How it Works</a>
+                        <button class="btn btn-primary" id="loginBtn">
+                            <i class="fab fa-spotify"></i>
+                            Get Started
+                        </button>
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        Convert Your Spotify Playlists to 
+                        <span class="gradient-text">High-Quality MP3</span>
+                    </h1>
+                    <p class="hero-description">
+                        Transform your favorite Spotify playlists into downloadable MP3 files. 
+                        Fast, free, and easy to use with glassmorphism design.
+                    </p>
+                    <div class="hero-actions">
+                        <button class="btn btn-primary btn-large" id="heroStartBtn">
+                            <i class="fas fa-play"></i>
+                            Start Converting
+                        </button>
+                        <button class="btn btn-secondary btn-large">
+                            <i class="fas fa-info-circle"></i>
+                            Learn More
+                        </button>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="glass-card demo-card">
+                        <div class="demo-content">
+                            <div class="demo-input">
+                                <i class="fab fa-spotify"></i>
+                                <span>https://open.spotify.com/playlist/...</span>
+                            </div>
+                            <div class="demo-arrow">
+                                <i class="fas fa-arrow-down"></i>
+                            </div>
+                            <div class="demo-output">
+                                <i class="fas fa-file-audio"></i>
+                                <span>playlist.zip (192kbps MP3)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main App Interface (Hidden by default) -->
+        <section class="app-interface" id="appInterface" style="display: none;">
+            <div class="container">
+                <!-- Step 1: Playlist Input -->
+                <div class="step-card" id="inputStep">
+                    <div class="glass-card">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <h2>Enter Spotify Playlist URL</h2>
+                        </div>
+                        <div class="input-group">
+                            <div class="input-wrapper">
+                                <i class="fab fa-spotify input-icon"></i>
+                                <input 
+                                    type="url" 
+                                    id="playlistUrl" 
+                                    placeholder="https://open.spotify.com/playlist/..."
+                                    class="playlist-input"
+                                >
+                                <button class="btn btn-primary" id="analyzeBtn">
+                                    <i class="fas fa-search"></i>
+                                    Analyze
+                                </button>
+                            </div>
+                        </div>
+                        <div class="input-help">
+                            <p>Paste your Spotify playlist URL above. Make sure the playlist is public.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Playlist Preview -->
+                <div class="step-card" id="previewStep" style="display: none;">
+                    <div class="glass-card">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <h2>Playlist Preview</h2>
+                        </div>
+                        <div class="playlist-info" id="playlistInfo">
+                            <!-- Playlist details will be populated here -->
+                        </div>
+                        <div class="track-list" id="trackList">
+                            <!-- Track list will be populated here -->
+                        </div>
+                        <div class="preview-actions">
+                            <button class="btn btn-secondary" id="backBtn">
+                                <i class="fas fa-arrow-left"></i>
+                                Back
+                            </button>
+                            <button class="btn btn-primary" id="convertBtn">
+                                <i class="fas fa-download"></i>
+                                Start Conversion
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Conversion Progress -->
+                <div class="step-card" id="progressStep" style="display: none;">
+                    <div class="glass-card">
+                        <div class="step-header">
+                            <div class="step-number">3</div>
+                            <h2>Converting Tracks</h2>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-info">
+                                <div class="progress-stats">
+                                    <span id="progressText">Initializing...</span>
+                                    <span id="progressPercent">0%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="progressFill"></div>
+                                </div>
+                            </div>
+                            <div class="current-track" id="currentTrack">
+                                <i class="fas fa-music"></i>
+                                <span>Preparing conversion...</span>
+                            </div>
+                            <div class="conversion-stats" id="conversionStats">
+                                <div class="stat">
+                                    <span class="stat-label">Completed</span>
+                                    <span class="stat-value" id="completedCount">0</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="stat-label">Failed</span>
+                                    <span class="stat-value" id="failedCount">0</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="stat-label">Total</span>
+                                    <span class="stat-value" id="totalCount">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Download Ready -->
+                <div class="step-card" id="downloadStep" style="display: none;">
+                    <div class="glass-card">
+                        <div class="step-header">
+                            <div class="step-number">4</div>
+                            <h2>Download Ready</h2>
+                        </div>
+                        <div class="download-info">
+                            <div class="success-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <h3>Conversion Completed!</h3>
+                            <p id="downloadMessage">Your playlist has been converted successfully.</p>
+                        </div>
+                        <div class="download-actions">
+                            <button class="btn btn-primary btn-large" id="downloadBtn">
+                                <i class="fas fa-download"></i>
+                                Download ZIP File
+                            </button>
+                            <button class="btn btn-secondary" id="newConversionBtn">
+                                <i class="fas fa-plus"></i>
+                                Convert Another Playlist
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features" id="features">
+            <div class="container">
+                <h2 class="section-title">Why Choose Our Converter?</h2>
+                <div class="features-grid">
+                    <div class="feature-card glass-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h3>Lightning Fast</h3>
+                        <p>Convert entire playlists in minutes with our optimized conversion engine.</p>
+                    </div>
+                    <div class="feature-card glass-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3>100% Free</h3>
+                        <p>No hidden fees, no subscriptions. Convert unlimited playlists completely free.</p>
+                    </div>
+                    <div class="feature-card glass-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-music"></i>
+                        </div>
+                        <h3>High Quality</h3>
+                        <p>192kbps MP3 files with excellent audio quality for all your favorite tracks.</p>
+                    </div>
+                    <div class="feature-card glass-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <h3>Mobile Friendly</h3>
+                        <p>Works perfectly on all devices - desktop, tablet, and mobile.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section class="how-it-works" id="how-it-works">
+            <div class="container">
+                <h2 class="section-title">How It Works</h2>
+                <div class="steps-grid">
+                    <div class="step-item">
+                        <div class="step-icon">1</div>
+                        <h3>Paste Playlist URL</h3>
+                        <p>Copy your Spotify playlist link and paste it into our converter.</p>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-icon">2</div>
+                        <h3>Preview & Confirm</h3>
+                        <p>Review your playlist tracks and confirm the conversion.</p>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-icon">3</div>
+                        <h3>Automatic Conversion</h3>
+                        <p>Our system finds and converts each track to high-quality MP3.</p>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-icon">4</div>
+                        <h3>Download ZIP</h3>
+                        <p>Get all your converted tracks in a convenient ZIP file.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <div class="logo">
+                            <i class="fas fa-music"></i>
+                            <span>Spotify to MP3</span>
+                        </div>
+                        <p>Convert your favorite playlists with ease.</p>
+                    </div>
+                    <div class="footer-section">
+                        <h4>Legal</h4>
+                        <ul>
+                            <li><a href="#privacy">Privacy Policy</a></li>
+                            <li><a href="#terms">Terms of Service</a></li>
+                            <li><a href="#disclaimer">Disclaimer</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h4>Support</h4>
+                        <ul>
+                            <li><a href="#help">Help Center</a></li>
+                            <li><a href="#contact">Contact Us</a></li>
+                            <li><a href="#faq">FAQ</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2024 Spotify to MP3 Converter. For personal use only.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p id="loadingText">Loading...</p>
+        </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div class="modal-overlay" id="errorModal" style="display: none;">
+        <div class="modal glass-card">
+            <div class="modal-header">
+                <h3>Error</h3>
+                <button class="modal-close" id="closeErrorModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="errorMessage">An error occurred.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="errorOkBtn">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
