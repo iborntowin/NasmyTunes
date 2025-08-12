@@ -54,6 +54,35 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
+@app.route('/test-conversion')
+def test_conversion():
+    """Test endpoint with guaranteed working songs"""
+    test_tracks = [
+        {
+            "name": "Shape of You",
+            "artists": ["Ed Sheeran"],
+            "duration_ms": 233713
+        },
+        {
+            "name": "Blinding Lights",
+            "artists": ["The Weeknd"],
+            "duration_ms": 200040
+        },
+        {
+            "name": "Levitating",
+            "artists": ["Dua Lipa"],
+            "duration_ms": 203064
+        }
+    ]
+    
+    return {
+        "message": "Test playlist with guaranteed working songs",
+        "playlist_name": "Test Conversion",
+        "total_tracks": len(test_tracks),
+        "tracks": test_tracks,
+        "instructions": "Use the /api/convert/start endpoint with this data"
+    }
+
 @app.route('/debug')
 def debug_info():
     """Debug endpoint to check system status"""
