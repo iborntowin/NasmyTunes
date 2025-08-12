@@ -3,16 +3,10 @@ services:
     name: spotify-mp3-converter
     env: python
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "python app.py"
+    startCommand: "python start_production.py"
     plan: free
     envVars:
-      - key: SPOTIFY_CLIENT_ID
-        value: c10a2cbeea0e4b558ee1aef44463f936
-      - key: SPOTIFY_CLIENT_SECRET
-        value: 97c90533b4b246cf9c7799d6cf49056f
-      - key: GENIUS_ACCESS_TOKEN
-        value: JUrrHKWrKxHAJTu3b8yY2-c4ZV7xKhHHBrduFOyE4gOMAAhXN7BCMwec2CXqArAx
       - key: FLASK_ENV
         value: production
       - key: SECRET_KEY
-        value: spotify-mp3-converter-secret-key-2024
+        generateValue: true

@@ -3,11 +3,7 @@ import sys
 import subprocess
 from dotenv import load_dotenv
 
-# Import deployment configuration for cloud deployment
-try:
-    import deployment_config
-except ImportError:
-    pass
+# Environment variables loaded via .env file
 
 # DON'T CHANGE THIS !!!
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
@@ -26,15 +22,20 @@ load_dotenv()
 # Check FFmpeg availability
 def check_ffmpeg():
     try:
-        subprocess.run(['ffmpeg', '-version'], capture_output=True, check=True)
+        result = subprocess.run(['ffmpeg', '-version'], capture_output=True, check=True, text=True)
         print("✅ FFmpeg is available")
         return True
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        print("❌ FFmpeg not found - audio conversion will fail")
+    except (subprocess.CalledProcessError, FileNotFoundError) as e:
+        print(f"❌ FFmpeg not found: {e}")
+        print("Audio conversion may fail without FFmpeg")
         return False
 
-# Check on startup
-ffmpeg_available = check_ffmpeg()
+# Check on startup (non-blocking)
+try:
+    ffmpeg_available = check_ffmpeg()
+except Exception as e:
+    print(f"FFmpeg check failed: {e}")
+    ffmpeg_available = False
 
 app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), 'static'))
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'asdf#FGSgvasgf$5$WGT')
@@ -53,6 +54,15 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 with app.app_context():
     db.create_all()
+
+@app.route('/health')
+def health_check():
+    """Health check endpoint for monitoring"""
+    return {
+        'status': 'healthy',
+        'service': 'nasmytunes',
+        'version': '1.0.0'
+    }
 
 @app.route('/test-conversion')
 def test_conversion():
@@ -93,8 +103,18 @@ def debug_info():
         'python_version': sys.version,
         'environment': os.environ.get('FLASK_ENV', 'unknown'),
         'spotify_configured': bool(os.getenv('SPOTIFY_CLIENT_ID')),
+        'port': os.environ.get('PORT', '5001'),
+        'app_status': 'running'
     }
     return debug_data
+
+@app.errorhandler(404)
+def not_found(error):
+    return jsonify({'error': 'Not found'}), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    return jsonify({'error': 'Internal server error'}), 500
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')

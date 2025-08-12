@@ -7,11 +7,7 @@ import sys
 # Add src directory to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
-# Import deployment configuration
-try:
-    import deployment_config
-except ImportError:
-    pass
+# No deployment config needed - use environment variables
 
 # Import the Flask app
 from main import app
