@@ -1,0 +1,6 @@
+# Core dependencies for NasmyTunes CLI
+spotipy==2.25.1
+yt-dlp==2025.8.11
+youtube-search==2.1.2
+python-dotenv==1.1.1
+requests==2.32.4
