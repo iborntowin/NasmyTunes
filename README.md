@@ -1,6 +1,18 @@
 # 🎵 NasmyTunes - Spotify to MP3 Converter
 
-Convert your Spotify playlists to high-quality MP3 files with a beautiful glassmorphism interface.
+Convert your Spotify playlists to high-quality MP3 files with an easy-to-use CLI interface.
+
+## 🚀 Super Quick Start
+
+```bash
+git clone https://github.com/iborntowin/NasmyTunes.git
+cd NasmyTunes
+python setup.py
+# Edit .env with your Spotify API credentials
+python nasmytunes_cli.py  # Or double-click nasmytunes.bat on Windows
+```
+
+That's it! Just paste your playlist URL and enjoy your music! 🎵
 
 ## 📋 Table of Contents
 
@@ -25,22 +37,28 @@ Convert your Spotify playlists to high-quality MP3 files with a beautiful glassm
 
 1. **Clone and setup:**
 ```bash
-git clone <your-repo-url>
-cd nasmytunes
+git clone https://github.com/iborntowin/NasmyTunes.git
+cd NasmyTunes
 python setup.py  # Automatically installs everything!
 ```
 
 2. **Configure Spotify API:**
    - Edit `.env` with your [Spotify API credentials](https://developer.spotify.com/dashboard)
 
-3. **Start converting:**
+3. **Start the app:**
 ```bash
-# Windows
-nasmytunes.bat "https://open.spotify.com/playlist/YOUR_PLAYLIST_ID"
+# Windows - Double-click nasmytunes.bat
+# Or run: python nasmytunes_cli.py
 
 # Mac/Linux  
-./nasmytunes.sh "https://open.spotify.com/playlist/YOUR_PLAYLIST_ID"
+./nasmytunes.sh
 ```
+
+4. **Use the menu:**
+   - Select option 1 to convert playlists
+   - Just paste your Spotify playlist URL
+   - Choose your preferences
+   - Done! 🎉
 
 ### 🌐 Web Version
 

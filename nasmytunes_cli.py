@@ -264,32 +264,143 @@ class NasmyTunesCLI:
         else:
             print(f"\n😞 No tracks were converted successfully.")
 
-def main():
-    parser = argparse.ArgumentParser(description='NasmyTunes CLI - Convert Spotify playlists to MP3')
-    parser.add_argument('playlist_url', nargs='?', help='Spotify playlist URL')
-    parser.add_argument('-o', '--output', help='Output directory (default: ./downloads)')
-    parser.add_argument('-n', '--number', type=int, help='Maximum number of tracks to convert')
-    parser.add_argument('--test', action='store_true', help='Test with single track')
+def show_menu():
+    """Display the main menu"""
+    print("\n🎵 NasmyTunes CLI - Spotify to MP3 Converter")
+    print("=" * 50)
+    print("1. Convert Spotify Playlist to MP3")
+    print("2. Test Download (Single Track)")
+    print("3. Help & Instructions")
+    print("4. Exit")
+    print("=" * 50)
+
+def get_user_choice():
+    """Get user menu choice"""
+    while True:
+        try:
+            choice = input("👉 Select an option (1-4): ").strip()
+            if choice in ['1', '2', '3', '4']:
+                return int(choice)
+            else:
+                print("❌ Please enter a number between 1-4")
+        except KeyboardInterrupt:
+            print("\n👋 Goodbye!")
+            sys.exit(0)
+        except:
+            print("❌ Please enter a valid number")
+
+def show_help():
+    """Show help and instructions"""
+    print("\n📖 How to Use NasmyTunes:")
+    print("=" * 50)
+    print("1. Get your Spotify playlist URL:")
+    print("   - Open Spotify")
+    print("   - Go to your playlist")
+    print("   - Click 'Share' → 'Copy link to playlist'")
+    print("   - Example: https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M")
+    print("\n2. Paste the URL when prompted")
+    print("3. Choose output options")
+    print("4. Wait for conversion to complete")
+    print("5. Find your MP3 files in the downloads folder")
+    print("\n💡 Tips:")
+    print("   - Make sure your playlist is public or you own it")
+    print("   - Conversion time depends on playlist size")
+    print("   - Files are saved as high-quality MP3s")
+    print("   - A ZIP file is created with all tracks")
+
+def get_playlist_options():
+    """Get playlist conversion options from user"""
+    print("\n🎵 Playlist Conversion Setup")
+    print("=" * 30)
     
-    args = parser.parse_args()
+    # Get playlist URL
+    while True:
+        playlist_url = input("📋 Paste your Spotify playlist URL: ").strip()
+        if not playlist_url:
+            print("❌ Please enter a playlist URL")
+            continue
+        if 'spotify.com/playlist/' not in playlist_url and 'spotify:playlist:' not in playlist_url:
+            print("❌ Please enter a valid Spotify playlist URL")
+            continue
+        break
     
-    if args.test:
-        print("🧪 Testing with a single track...")
-        os.makedirs("./test_downloads", exist_ok=True)
-        cli = NasmyTunesCLI()
-        success, message = cli.download_track("Never Gonna Give You Up", ["Rick Astley"], "./test_downloads")
-        print(f"Test result: {message}")
-        return
+    # Get output directory (optional)
+    output_dir = input("📁 Output folder (press Enter for default 'downloads'): ").strip()
+    if not output_dir:
+        output_dir = None
     
-    if not args.playlist_url:
-        print("❌ Please provide a Spotify playlist URL")
-        print("Usage: python nasmytunes_cli.py <playlist_url>")
-        print("       python nasmytunes_cli.py --test")
-        return
+    # Get max tracks (optional)
+    while True:
+        max_tracks_input = input("🔢 Max tracks to convert (press Enter for all): ").strip()
+        if not max_tracks_input:
+            max_tracks = None
+            break
+        try:
+            max_tracks = int(max_tracks_input)
+            if max_tracks <= 0:
+                print("❌ Please enter a positive number")
+                continue
+            break
+        except ValueError:
+            print("❌ Please enter a valid number")
     
-    # Run conversion
+    return playlist_url, output_dir, max_tracks
+
+def run_test():
+    """Run a test download"""
+    print("\n🧪 Testing Download...")
+    print("=" * 30)
+    print("Testing with: 'Never Gonna Give You Up' by Rick Astley")
+    
+    os.makedirs("./test_downloads", exist_ok=True)
     cli = NasmyTunesCLI()
-    cli.convert_playlist(args.playlist_url, args.output, args.number)
+    success, message = cli.download_track("Never Gonna Give You Up", ["Rick Astley"], "./test_downloads")
+    
+    if success:
+        print(f"✅ Test successful: {message}")
+        print("📁 Check the 'test_downloads' folder for the MP3 file")
+    else:
+        print(f"❌ Test failed: {message}")
+    
+    input("\nPress Enter to continue...")
+
+def main():
+    """Main application loop"""
+    try:
+        while True:
+            show_menu()
+            choice = get_user_choice()
+            
+            if choice == 1:
+                # Convert playlist
+                try:
+                    playlist_url, output_dir, max_tracks = get_playlist_options()
+                    cli = NasmyTunesCLI()
+                    cli.convert_playlist(playlist_url, output_dir, max_tracks)
+                    input("\nPress Enter to continue...")
+                except Exception as e:
+                    print(f"❌ Error: {e}")
+                    input("Press Enter to continue...")
+            
+            elif choice == 2:
+                # Test download
+                run_test()
+            
+            elif choice == 3:
+                # Show help
+                show_help()
+                input("\nPress Enter to continue...")
+            
+            elif choice == 4:
+                # Exit
+                print("\n👋 Thanks for using NasmyTunes!")
+                break
+    
+    except KeyboardInterrupt:
+        print("\n👋 Goodbye!")
+    except Exception as e:
+        print(f"\n❌ Unexpected error: {e}")
+        print("Please try again or report this issue.")
 
 if __name__ == "__main__":
     main()
