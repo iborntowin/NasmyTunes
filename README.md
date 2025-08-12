@@ -21,33 +21,48 @@ Convert your Spotify playlists to high-quality MP3 files with a beautiful glassm
 
 ## ⚡ Quick Start
 
-1. **Clone the repository:**
+### 🖥️ CLI Version (Recommended)
+
+1. **Clone and setup:**
+```bash
+git clone <your-repo-url>
+cd nasmytunes
+python setup.py  # Automatically installs everything!
+```
+
+2. **Configure Spotify API:**
+   - Edit `.env` with your [Spotify API credentials](https://developer.spotify.com/dashboard)
+
+3. **Start converting:**
+```bash
+# Windows
+nasmytunes.bat "https://open.spotify.com/playlist/YOUR_PLAYLIST_ID"
+
+# Mac/Linux  
+./nasmytunes.sh "https://open.spotify.com/playlist/YOUR_PLAYLIST_ID"
+```
+
+### 🌐 Web Version
+
+1. **Manual setup:**
 ```bash
 git clone <your-repo-url>
 cd spotify-mp3-converter
-```
-
-2. **Install dependencies:**
-```bash
 pip install -r requirements.txt
 ```
 
-3. **Install FFmpeg:**
+2. **Install FFmpeg:**
    - Windows: `winget install ffmpeg`
    - macOS: `brew install ffmpeg`
    - Linux: `sudo apt install ffmpeg`
 
-4. **Set up environment variables:**
+3. **Configure environment:**
 ```bash
 cp .env.example .env
 # Edit .env with your API keys
 ```
 
-5. **Get API Keys:**
-   - **Spotify:** [Developer Dashboard](https://developer.spotify.com/dashboard)
-   - **Genius (optional):** [API Clients](https://genius.com/api-clients)
-
-6. **Run locally:**
+4. **Run locally:**
 ```bash
 python src/main.py
 ```
