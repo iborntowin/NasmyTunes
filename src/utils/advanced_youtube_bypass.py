@@ -103,8 +103,9 @@ class AdvancedYouTubeBypass:
         if use_cookies:
             try:
                 opts, cookie_file = self.cookie_bypass.get_cookie_opts(opts)
+                print(f"      Using cookies: {cookie_file}")
             except Exception as e:
-                print(f"Cookie bypass failed: {e}")
+                print(f"      Cookie bypass failed: {e}")
         
         return opts
     
@@ -119,52 +120,69 @@ class AdvancedYouTubeBypass:
         
         for method in methods:
             try:
-                if method(video_url, output_path, filename):
+                result = method(video_url, output_path, filename)
+                if result:
                     return True
-                time.sleep(random.uniform(2, 5))
+                time.sleep(random.uniform(1, 3))
             except Exception as e:
-                print(f"Method {method.__name__} failed: {e}")
+                print(f"    Method {method.__name__} failed: {str(e)[:100]}")
                 continue
         
         return False
     
     def _try_android_client(self, video_url, output_path, filename):
         """Try with Android client"""
-        opts = self.get_advanced_ydl_opts(output_path, filename)
-        opts['extractor_args']['youtube']['player_client'] = ['android']
-        
-        with yt_dlp.YoutubeDL(opts) as ydl:
-            ydl.download([video_url])
-        return True
+        try:
+            opts = self.get_advanced_ydl_opts(output_path, filename)
+            opts['extractor_args']['youtube']['player_client'] = ['android']
+            
+            with yt_dlp.YoutubeDL(opts) as ydl:
+                ydl.download([video_url])
+            return True
+        except Exception as e:
+            print(f"      Android client error: {str(e)[:100]}")
+            return False
     
     def _try_web_client(self, video_url, output_path, filename):
         """Try with web client and different user agent"""
-        opts = self.get_advanced_ydl_opts(output_path, filename)
-        opts['extractor_args']['youtube']['player_client'] = ['web']
-        opts['http_headers']['User-Agent'] = random.choice(self.user_agents)
-        
-        with yt_dlp.YoutubeDL(opts) as ydl:
-            ydl.download([video_url])
-        return True
+        try:
+            opts = self.get_advanced_ydl_opts(output_path, filename)
+            opts['extractor_args']['youtube']['player_client'] = ['web']
+            opts['http_headers']['User-Agent'] = random.choice(self.user_agents)
+            
+            with yt_dlp.YoutubeDL(opts) as ydl:
+                ydl.download([video_url])
+            return True
+        except Exception as e:
+            print(f"      Web client error: {str(e)[:100]}")
+            return False
     
     def _try_embedded_client(self, video_url, output_path, filename):
         """Try with embedded client"""
-        opts = self.get_advanced_ydl_opts(output_path, filename)
-        opts['extractor_args']['youtube']['player_client'] = ['web_embedded']
-        
-        with yt_dlp.YoutubeDL(opts) as ydl:
-            ydl.download([video_url])
-        return True
+        try:
+            opts = self.get_advanced_ydl_opts(output_path, filename)
+            opts['extractor_args']['youtube']['player_client'] = ['web_embedded']
+            
+            with yt_dlp.YoutubeDL(opts) as ydl:
+                ydl.download([video_url])
+            return True
+        except Exception as e:
+            print(f"      Embedded client error: {str(e)[:100]}")
+            return False
     
     def _try_mobile_client(self, video_url, output_path, filename):
         """Try with mobile client"""
-        opts = self.get_advanced_ydl_opts(output_path, filename)
-        opts['extractor_args']['youtube']['player_client'] = ['mweb']
-        opts['http_headers']['User-Agent'] = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_1 like Mac OS X) AppleWebKit/605.1.15'
-        
-        with yt_dlp.YoutubeDL(opts) as ydl:
-            ydl.download([video_url])
-        return True
+        try:
+            opts = self.get_advanced_ydl_opts(output_path, filename)
+            opts['extractor_args']['youtube']['player_client'] = ['mweb']
+            opts['http_headers']['User-Agent'] = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_1 like Mac OS X) AppleWebKit/605.1.15'
+            
+            with yt_dlp.YoutubeDL(opts) as ydl:
+                ydl.download([video_url])
+            return True
+        except Exception as e:
+            print(f"      Mobile client error: {str(e)[:100]}")
+            return False
     
     def search_alternative_sources(self, track_name, artists):
         """Search for alternative video sources"""

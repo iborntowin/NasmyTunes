@@ -25,9 +25,13 @@ def test_advanced_bypass():
             print(f"\n🎵 Testing: {track_name} by {', '.join(artists)}")
             print("-" * 40)
             
-            success, message = bypass.download_with_advanced_bypass(
-                track_name, artists, temp_dir, max_attempts=1
-            )
+            try:
+                success, message = bypass.download_with_advanced_bypass(
+                    track_name, artists, temp_dir, max_attempts=1
+                )
+            except Exception as e:
+                success = False
+                message = f"Exception: {str(e)}"
             
             if success:
                 print(f"✅ SUCCESS: {message}")
