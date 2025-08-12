@@ -8,6 +8,7 @@ from youtube_search import YoutubeSearch
 import yt_dlp
 from src.utils.youtube_downloader import EnhancedYouTubeDownloader
 from src.utils.alternative_downloader import AlternativeAudioDownloader
+from src.utils.advanced_youtube_bypass import AdvancedYouTubeBypass
 import threading
 import time
 from datetime import datetime, timedelta
@@ -166,10 +167,12 @@ def convert_tracks_background(job_id):
         # Initialize downloaders
         youtube_downloader = EnhancedYouTubeDownloader()
         alternative_downloader = AlternativeAudioDownloader()
+        advanced_bypass = AdvancedYouTubeBypass()
         downloaded_files = []
         
         # Check if we should use demo mode (for YouTube bot issues)
         demo_mode = os.getenv('DEMO_MODE', 'false').lower() == 'true'
+        force_advanced_bypass = os.getenv('FORCE_ADVANCED_BYPASS', 'true').lower() == 'true'
         
         for i, track in enumerate(job['tracks']):
             try:
@@ -183,24 +186,36 @@ def convert_tracks_background(job_id):
                 message = ""
                 
                 if demo_mode:
-                    # Use alternative downloader for demo
-                    success, message = alternative_downloader.download_track_alternative(
+                    # Use enhanced demo mode
+                    success, message = advanced_bypass.create_enhanced_demo_file(
                         track['name'], 
                         track['artists'], 
                         temp_dir
                     )
                 else:
-                    # Try YouTube downloader first
-                    success, message = youtube_downloader.download_track(
-                        track['name'], 
-                        track['artists'], 
-                        temp_dir
-                    )
+                    # Try advanced bypass first
+                    if force_advanced_bypass:
+                        print(f"🚀 Using advanced YouTube bypass...")
+                        success, message = advanced_bypass.download_with_advanced_bypass(
+                            track['name'], 
+                            track['artists'], 
+                            temp_dir,
+                            max_attempts=2  # Limit attempts to avoid timeout
+                        )
                     
-                    # If YouTube fails, fall back to alternative
+                    # If advanced bypass fails, try standard YouTube downloader
                     if not success:
-                        print(f"YouTube failed, trying alternative method...")
-                        success, message = alternative_downloader.download_track_alternative(
+                        print(f"Advanced bypass failed, trying standard YouTube...")
+                        success, message = youtube_downloader.download_track(
+                            track['name'], 
+                            track['artists'], 
+                            temp_dir
+                        )
+                    
+                    # If all YouTube methods fail, fall back to enhanced demo
+                    if not success:
+                        print(f"All YouTube methods failed, creating enhanced demo...")
+                        success, message = advanced_bypass.create_enhanced_demo_file(
                             track['name'], 
                             track['artists'], 
                             temp_dir

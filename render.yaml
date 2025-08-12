@@ -11,4 +11,6 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: DEMO_MODE
+        value: false
+      - key: FORCE_ADVANCED_BYPASS
         value: true

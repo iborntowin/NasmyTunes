@@ -127,6 +127,34 @@ def toggle_demo():
         'note': 'Demo mode creates placeholder files instead of downloading from YouTube'
     }
 
+@app.route('/test-bypass')
+def test_bypass():
+    """Test the advanced YouTube bypass"""
+    import tempfile
+    from src.utils.advanced_youtube_bypass import AdvancedYouTubeBypass
+    
+    bypass = AdvancedYouTubeBypass()
+    
+    with tempfile.TemporaryDirectory() as temp_dir:
+        success, message = bypass.download_with_advanced_bypass(
+            "Never Gonna Give You Up", 
+            ["Rick Astley"], 
+            temp_dir,
+            max_attempts=1
+        )
+        
+        files_created = []
+        if os.path.exists(temp_dir):
+            files_created = os.listdir(temp_dir)
+        
+        return {
+            'bypass_test': 'completed',
+            'success': success,
+            'message': message,
+            'files_created': files_created,
+            'advanced_bypass_active': os.getenv('FORCE_ADVANCED_BYPASS', 'false').lower() == 'true'
+        }
+
 @app.errorhandler(404)
 def not_found(error):
     return jsonify({'error': 'Not found'}), 404
