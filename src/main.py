@@ -1,5 +1,6 @@
 import os
 import sys
+import subprocess
 from dotenv import load_dotenv
 
 # Import deployment configuration for cloud deployment
@@ -22,6 +23,19 @@ from src.routes.conversion import conversion_bp
 # Load environment variables
 load_dotenv()
 
+# Check FFmpeg availability
+def check_ffmpeg():
+    try:
+        subprocess.run(['ffmpeg', '-version'], capture_output=True, check=True)
+        print("✅ FFmpeg is available")
+        return True
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        print("❌ FFmpeg not found - audio conversion will fail")
+        return False
+
+# Check on startup
+ffmpeg_available = check_ffmpeg()
+
 app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), 'static'))
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'asdf#FGSgvasgf$5$WGT')
 
@@ -39,6 +53,19 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 with app.app_context():
     db.create_all()
+
+@app.route('/debug')
+def debug_info():
+    """Debug endpoint to check system status"""
+    import shutil
+    debug_data = {
+        'ffmpeg_available': shutil.which('ffmpeg') is not None,
+        'ffmpeg_path': shutil.which('ffmpeg'),
+        'python_version': sys.version,
+        'environment': os.environ.get('FLASK_ENV', 'unknown'),
+        'spotify_configured': bool(os.getenv('SPOTIFY_CLIENT_ID')),
+    }
+    return debug_data
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')

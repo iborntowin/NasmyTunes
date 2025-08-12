@@ -13,9 +13,6 @@
     }
   ],
   "env": {
-    "SPOTIFY_CLIENT_ID": "c10a2cbeea0e4b558ee1aef44463f936",
-    "SPOTIFY_CLIENT_SECRET": "97c90533b4b246cf9c7799d6cf49056f",
-    "GENIUS_ACCESS_TOKEN": "JUrrHKWrKxHAJTu3b8yY2-c4ZV7xKhHHBrduFOyE4gOMAAhXN7BCMwec2CXqArAx",
     "FLASK_ENV": "production"
   }
 }
