@@ -18,6 +18,7 @@ That's it! Just paste your playlist URL and enjoy your music! 🎵
 
 - [🏗️ System Architecture](#️-system-architecture)
 - [⚡ Quick Start](#-quick-start)
+- [📁 Project Structure](#-project-structure)
 - [🌐 Live Demo](#-live-demo)
 - [🚀 Free Deployment Options](#-free-deployment-options)
 - [🤖 Advanced Bypass Techniques](#-advanced-bypass-techniques)
@@ -27,7 +28,7 @@ That's it! Just paste your playlist URL and enjoy your music! 🎵
 
 ## 🏗️ System Architecture
 
-![NasmyTunes Architecture](diagram.png)
+![NasmyTunes Architecture](docs/diagram.png)
 
 *Complete system architecture showing the flow from Spotify playlist analysis to MP3 conversion and download*
 
@@ -59,6 +60,23 @@ python setup.py  # Automatically installs everything!
    - Just paste your Spotify playlist URL
    - Choose your preferences
    - Done! 🎉
+
+## 📁 Project Structure
+
+```
+NasmyTunes/
+├── 📄 nasmytunes_cli.py      # Main CLI application
+├── 🔧 setup.py              # Automatic setup script
+├── 🦇 nasmytunes.bat         # Windows launcher
+├── 🐧 nasmytunes.sh          # Mac/Linux launcher
+├── 📋 requirements.txt       # Python dependencies
+├── 📖 README.md              # This file
+├── 📁 src/                   # Web application source
+├── 📁 docs/                  # Documentation & guides
+├── 📁 tests/                 # Test files
+├── 📁 scripts/               # Build & deployment scripts
+└── 📁 deployment/            # Platform configs (Render, Railway, etc.)
+```
 
 ### 🌐 Web Version
 
