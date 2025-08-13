@@ -37,9 +37,24 @@ That's it! Just paste your playlist URL and enjoy your music! 🎵
 
 Want to see NasmyTunes in action? Try converting this curated playlist:
 
-<iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/5VZvJmyPmCIsY6rJ5JJ10X?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+<div align="center">
 
-*A carefully curated playlist perfect for testing NasmyTunes - enjoy the music! 🎧*
+[![Spotify Playlist](https://img.shields.io/badge/🎵_Test_Playlist-Listen_on_Spotify-1DB954?style=for-the-badge&logo=spotify&logoColor=white)](https://open.spotify.com/playlist/5VZvJmyPmCIsY6rJ5JJ10X)
+
+### 🎧 Featured Test Playlist
+**Perfect for testing NasmyTunes - A carefully curated selection of tracks**
+
+```
+https://open.spotify.com/playlist/5VZvJmyPmCIsY6rJ5JJ10X
+```
+
+</div>
+
+### 🚀 How to use this playlist:
+1. **Copy** the playlist URL above
+2. **Run** NasmyTunes CLI (`python nasmytunes_cli.py`)
+3. **Select** option 1 (Convert Playlist)
+4. **Paste** the URL and enjoy your MP3s! 🎶
 
 ## ⚡ Quick Start
 

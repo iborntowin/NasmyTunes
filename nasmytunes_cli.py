@@ -74,6 +74,34 @@ class NasmyTunesCLI:
         except:
             return None
     
+    def validate_playlist_access(self, playlist_id):
+        """Check if playlist is accessible before full processing"""
+        try:
+            # Try to get basic playlist info first
+            playlist = self.sp.playlist(playlist_id, fields="name,public,owner,tracks.total")
+            
+            # Check if playlist is public
+            if not playlist.get('public', True):
+                print("⚠️  Warning: This playlist appears to be private")
+                print("   You can only convert public playlists")
+                return False
+                
+            print(f"✅ Playlist found: {playlist.get('name', 'Unknown')}")
+            print(f"📊 Total tracks: {playlist.get('tracks', {}).get('total', 0)}")
+            return True
+            
+        except Exception as e:
+            if "404" in str(e):
+                print("❌ Playlist not found or not accessible")
+                print("💡 Possible reasons:")
+                print("   • Playlist is private or deleted")
+                print("   • Playlist is region-restricted")
+                print("   • Invalid playlist URL")
+                print("   • You don't have access to this playlist")
+            else:
+                print(f"❌ Error accessing playlist: {e}")
+            return False
+    
     def get_playlist_tracks(self, playlist_url):
         """Get tracks from Spotify playlist"""
         print(f"🔍 Analyzing playlist...")
@@ -81,6 +109,16 @@ class NasmyTunesCLI:
         playlist_id = self.extract_playlist_id(playlist_url)
         if not playlist_id:
             print("❌ Invalid Spotify playlist URL")
+            print("💡 Make sure your URL looks like:")
+            print("   https://open.spotify.com/playlist/PLAYLIST_ID")
+            return None, []
+        
+        # Validate playlist access first
+        if not self.validate_playlist_access(playlist_id):
+            print("\n🎵 Try these working playlists instead:")
+            print("   • https://open.spotify.com/playlist/5VZvJmyPmCIsY6rJ5JJ10X")
+            print("   • https://open.spotify.com/playlist/37i9dQZF1DX0XUsuxWHRQd")
+            print("   • Or use any PUBLIC playlist you own")
             return None, []
         
         try:
@@ -108,7 +146,26 @@ class NasmyTunesCLI:
             return playlist['name'], tracks
             
         except Exception as e:
-            print(f"❌ Error fetching playlist: {e}")
+            error_msg = str(e)
+            print(f"❌ Error fetching playlist: {error_msg}")
+            
+            # Provide helpful error messages
+            if "404" in error_msg or "Resource not found" in error_msg:
+                print("\n💡 Possible reasons:")
+                print("   • Playlist is private (make it public)")
+                print("   • Playlist doesn't exist or was deleted")
+                print("   • Playlist is region-restricted")
+                print("   • You don't have access to this playlist")
+                print("\n🔧 Solutions:")
+                print("   • Try a different playlist")
+                print("   • Make sure the playlist is public")
+                print("   • Use a playlist you own or have access to")
+            elif "401" in error_msg or "invalid_client" in error_msg:
+                print("\n💡 This is an API credentials issue:")
+                print("   • Check your .env file")
+                print("   • Verify your Client ID and Secret")
+                print("   • Visit: https://developer.spotify.com/dashboard")
+            
             return None, []
     
     def download_track(self, track_name, artists, output_dir):
@@ -327,6 +384,10 @@ def show_help():
     print("• Files are saved as high-quality MP3s")
     print("• A ZIP file is created with all tracks")
     print("• Use option 2 to test if everything works")
+    
+    print("\n🎵 EXAMPLE PLAYLISTS TO TRY:")
+    print("• Test Playlist: https://open.spotify.com/playlist/5VZvJmyPmCIsY6rJ5JJ10X")
+    print("• Make sure to use PUBLIC playlists only!")
     
     print("\n🔗 USEFUL LINKS:")
     print("• Spotify Developer Dashboard: https://developer.spotify.com/dashboard")
