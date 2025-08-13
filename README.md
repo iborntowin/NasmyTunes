@@ -17,10 +17,10 @@ That's it! Just paste your playlist URL and enjoy your music! 🎵
 ## 📋 Table of Contents
 
 - [🏗️ System Architecture](#️-system-architecture)
+- [🎵 Live Demo](#-live-demo)
 - [⚡ Quick Start](#-quick-start)
 - [🔑 Spotify API Setup Guide](#-spotify-api-setup-guide)
 - [📁 Project Structure](#-project-structure)
-- [🌐 Live Demo](#-live-demo)
 - [🚀 Free Deployment Options](#-free-deployment-options)
 - [🤖 Advanced Bypass Techniques](#-advanced-bypass-techniques)
 - [🛠️ Features](#️-features)
@@ -33,22 +33,35 @@ That's it! Just paste your playlist URL and enjoy your music! 🎵
 
 *Complete system architecture showing the flow from Spotify playlist analysis to MP3 conversion and download*
 
+## 🎵 Live Demo
+
+Want to see NasmyTunes in action? Try converting this curated playlist:
+
+<iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/5VZvJmyPmCIsY6rJ5JJ10X?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+
+*A carefully curated playlist perfect for testing NasmyTunes - enjoy the music! 🎧*
+
 ## ⚡ Quick Start
 
 ### 🖥️ CLI Version (Recommended)
 
-1. **Clone and setup:**
+#### Step 1: Clone and Setup
 ```bash
 git clone https://github.com/iborntowin/NasmyTunes.git
 cd NasmyTunes
 python setup.py  # Automatically installs everything!
 ```
 
-2. **Configure Spotify API:**
-   - Get your credentials from [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
-   - Edit `.env` with your API credentials (see setup guide below)
+![Installation Tutorial](docs/installation-tutorial.png)
+*The setup script will automatically install all dependencies and FFmpeg*
 
-3. **Start the app:**
+#### Step 2: Configure Spotify API
+Get your credentials from [Spotify Developer Dashboard](https://developer.spotify.com/dashboard) and edit your `.env` file:
+
+![Environment Configuration](docs/env-configuration-guide.png)
+*Edit the .env file with your Spotify API credentials*
+
+#### Step 3: Start Converting!
 ```bash
 # Windows - Double-click nasmytunes.bat
 # Or run: python nasmytunes_cli.py
@@ -57,11 +70,8 @@ python setup.py  # Automatically installs everything!
 ./nasmytunes.sh
 ```
 
-4. **Use the menu:**
-   - Select option 1 to convert playlists
-   - Just paste your Spotify playlist URL
-   - Choose your preferences
-   - Done! 🎉
+![Playlist Conversion Demo](docs/playlist-conversion-demo.png)
+*Select option 1, paste your playlist URL, and enjoy your music!*
 
 ## 🔑 Spotify API Setup Guide
 
@@ -79,6 +89,10 @@ python setup.py  # Automatically installs everything!
 
 ### Step 3: Configure NasmyTunes
 Edit your `.env` file with the credentials:
+
+![Environment Configuration Guide](docs/env-configuration-guide.png)
+*Your .env file should look like this with your actual credentials*
+
 ```env
 SPOTIFY_CLIENT_ID=your_client_id_here
 SPOTIFY_CLIENT_SECRET=your_client_secret_here
