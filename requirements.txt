@@ -29,5 +29,4 @@ youtube-search-python==1.6.6
 yt-dlp==2025.8.11
 fake-useragent==1.5.1
 rich==13.7.0
-click==8.1.7
 typer==0.9.0
