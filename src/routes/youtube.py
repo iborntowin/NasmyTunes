@@ -138,6 +138,7 @@ def convert_tracks_background(job_id, tracks):
                 video_url = f"https://www.youtube.com/watch?v={results[0]['id']}"
                 
                 # Download and convert to MP3
+                ffmpeg_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'ffmpeg', 'ffmpeg.exe')
                 ydl_opts = {
                     'format': 'bestaudio/best',
                     'outtmpl': os.path.join(temp_dir, f'{i+1:02d}. %(title)s.%(ext)s'),
@@ -146,6 +147,7 @@ def convert_tracks_background(job_id, tracks):
                         'preferredcodec': 'mp3',
                         'preferredquality': '192',
                     }],
+                    'ffmpeg_location': ffmpeg_path,
                     'quiet': True,
                     'no_warnings': True,
                 }

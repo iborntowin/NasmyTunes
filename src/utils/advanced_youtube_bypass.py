@@ -32,6 +32,7 @@ class AdvancedYouTubeBypass:
         
     def get_advanced_ydl_opts(self, output_path, filename, use_cookies=True):
         """Get advanced yt-dlp options with maximum bypass techniques"""
+        ffmpeg_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'ffmpeg', 'ffmpeg.exe')
         opts = {
             'format': 'bestaudio/best[height<=480]/worst',
             'outtmpl': os.path.join(output_path, f'{filename}.%(ext)s'),
@@ -40,6 +41,7 @@ class AdvancedYouTubeBypass:
                 'preferredcodec': 'mp3',
                 'preferredquality': '128',  # Lower quality for faster processing
             }],
+            'ffmpeg_location': ffmpeg_path,
             'quiet': True,
             'no_warnings': True,
             'extract_flat': False,

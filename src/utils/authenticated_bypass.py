@@ -96,6 +96,7 @@ class AuthenticatedBypass:
     def get_authenticated_opts(self, output_path, filename):
         """Get yt-dlp options with authentication and rate limiting"""
         cookie_file = self.create_realistic_cookies()
+        ffmpeg_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'ffmpeg', 'ffmpeg.exe')
         
         return {
             'format': 'bestaudio[ext=m4a]/bestaudio/best',
@@ -105,6 +106,7 @@ class AuthenticatedBypass:
                 'preferredcodec': 'mp3',
                 'preferredquality': '128',
             }],
+            'ffmpeg_location': ffmpeg_path,
             
             # Authentication
             'cookiefile': cookie_file,

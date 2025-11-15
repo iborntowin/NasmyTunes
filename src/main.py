@@ -19,10 +19,13 @@ from src.routes.conversion import conversion_bp
 # Load environment variables
 load_dotenv()
 
+# Define FFmpeg path
+FFMPEG_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'ffmpeg', 'ffmpeg.exe')
+
 # Check FFmpeg availability
 def check_ffmpeg():
     try:
-        result = subprocess.run(['ffmpeg', '-version'], capture_output=True, check=True, text=True)
+        result = subprocess.run([FFMPEG_PATH, '-version'], capture_output=True, check=True, text=True)
         print("✅ FFmpeg is available")
         return True
     except (subprocess.CalledProcessError, FileNotFoundError) as e:
@@ -98,8 +101,8 @@ def debug_info():
     """Debug endpoint to check system status"""
     import shutil
     debug_data = {
-        'ffmpeg_available': shutil.which('ffmpeg') is not None,
-        'ffmpeg_path': shutil.which('ffmpeg'),
+        'ffmpeg_available': os.path.exists(FFMPEG_PATH),
+        'ffmpeg_path': FFMPEG_PATH if os.path.exists(FFMPEG_PATH) else None,
         'python_version': sys.version,
         'environment': os.environ.get('FLASK_ENV', 'unknown'),
         'spotify_configured': bool(os.getenv('SPOTIFY_CLIENT_ID')),

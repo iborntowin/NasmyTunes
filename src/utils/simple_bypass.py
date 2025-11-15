@@ -18,6 +18,7 @@ class SimpleBypass:
     
     def get_simple_opts(self, output_path, filename):
         """Get simplified but effective yt-dlp options"""
+        ffmpeg_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'ffmpeg', 'ffmpeg.exe')
         return {
             'format': 'bestaudio[ext=m4a]/bestaudio/best',
             'outtmpl': os.path.join(output_path, f'{filename}.%(ext)s'),
@@ -26,6 +27,7 @@ class SimpleBypass:
                 'preferredcodec': 'mp3',
                 'preferredquality': '128',
             }],
+            'ffmpeg_location': ffmpeg_path,
             'quiet': True,
             'no_warnings': True,
             'ignoreerrors': True,

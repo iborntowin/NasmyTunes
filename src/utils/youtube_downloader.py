@@ -18,6 +18,7 @@ class EnhancedYouTubeDownloader:
     
     def get_ydl_opts(self, output_path, filename):
         """Get yt-dlp options with anti-bot measures"""
+        ffmpeg_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'ffmpeg', 'ffmpeg.exe')
         return {
             'format': 'bestaudio/best',
             'outtmpl': os.path.join(output_path, f'{filename}.%(ext)s'),
@@ -26,6 +27,7 @@ class EnhancedYouTubeDownloader:
                 'preferredcodec': 'mp3',
                 'preferredquality': '192',
             }],
+            'ffmpeg_location': ffmpeg_path,
             'quiet': True,
             'no_warnings': True,
             'extract_flat': False,
